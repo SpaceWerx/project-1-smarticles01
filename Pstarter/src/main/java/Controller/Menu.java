@@ -2,6 +2,8 @@ package Controller;
 
 import java.util.List;
 
+import javax.management.relation.Role;
+
 import Models.Reimbursement_;
 import Models.Roles;
 import Models.Status;
@@ -142,7 +144,7 @@ public class Menu {
 					+ "\nDescription: " + reimbursementToBeProcessed.getDescription()
 			);
 			
-			System.out.println("PLEASE ENTER THE NUMBRE OF YOUR CHOICE");
+			System.out.println("PLEASE ENTER THE NUMBER OF YOUR CHOICE");
 			System.out.println("1 -> Approve");
 			System.out.println("2 -> Deny");
 			
@@ -250,6 +252,119 @@ public class Menu {
 		}
 	}
 	
-	public void displayPreviousRequests(Users_ employee)
+	public void displayPreviousRequests(Users_ employee) {
+		List<Reimbursement_>reimbursements = Reimbursement_Services.getReimbursemetsByAuthor(employee.getId());
+		
+		if(reimbursements.isEmpty()) {
+			System.out.println("No Previous Requests.....");
+			System.out.println("Retuurning to Previous Menu....");
+		}
+		for(Reimbursement_ r : reimbursements) {
+			System.out.println(r);
+		}
+	}
+	public void displayMenu() {
+		//menu continues after input
+		boolean menuOptions = true;
+		
+		System.out.println("------------------------");
+		System.out.println("Welcome to the Revature Reimbursement System!");
+		System.out.println("------------------------");
+		System.out.println();
+		
+		//display all menu options until boolean == false
+		while(menuOptions) {
+			System.out.println("PLEASE ENTER A NUMBER");
+			System.out.println("1 -> Employee Portal");
+			System.out.println("2 -> Finance Manager Portal");
+			System.out.println("0 -> Exit Aplication");
+			
+			//parameters list of valid options that user can input
+			int firstChoice = promptSelection(...validEntries 1, 2, 0);
+			
+			switch(firstChoice) {
+				case 1:
+					handlePortal(Role.employee);
+					break;
+				case 2:
+					handlePortal(Role.manager);
+					break;
+				case 0:
+					System.out.println("\nHave a great day! Goodbye!");
+					menuOptions = false;
+					break;
+			}
+		}
+	}
+	public void displayFinanceManagerMenu(Users_ manager) {
+		boolean managerPortal = true;
+		
+		System.out.println("----------------------------");
+		System.out.println("Welcome to the Manager Portal, " + manager.getUsername());
+		System.out.println("----------------------------");
+		System.out.println();
+		
+		while(managerPortal) {
+			System.out.println("PLEASE ENTER A NUMBER");
+			System.out.println("1 -> View All Pending Reimbursements");
+			System.out.println("2 -> View All Resolved Reimbursements");
+			System.out.println("3 -> Process a Reimbursement");
+			System.out.println("4 -> Submit a Reimbursement");
+			System.out.println("0 -> Return to Main Menu");
+			
+			//parameters list of valid options that user can input
+			int firstChoice = promptSelection(...validEntries 1, 2, 3, 4,0);
+			
+			switch(firstChoice) {
+				case 1:
+					displayPendingReimbursements();
+					break;
+				case 2:
+					displayResolvedReimbursements();
+					break;
+				case 3:
+					processReimbursement(manager);
+					break;
+				case 4:
+					submitReimbursement(manager);
+					break;
+				case 0:
+					System.out.println("Returning to Main Menu...");
+					managerPortal = false;
+					break;
+			}
+		}
+	}
+	public void displayEmployeeMenu(Users_ employee) {
+		boolean employeePortal = true;
+		
+		System.out.println("-------------------------");
+		System.out.println("Welsome to the Employee Portal, " + employee.getUsername());
+		System.out.println("-------------------------");
+		System.out.println();
+		
+		while(employeePortal) {
+			System.out.println("PLEASE ENTER A NUMBER");
+			System.out.println("1 -> View Previous Requests");
+			System.out.println("2 -> Submit a Reimbursement");
+			System.out.println("0 -> Return to Main Menu");
+			
+			//parameters list of valid options that user can input
+			int firstChoice = promptSelection(...validEntries 1, 2, 0);
+			
+			switch(firstChoice) {
+				case 1:
+					displayPreviousRequests(employee);
+					break;
+				case 2:
+					submitReimbursement(employee);
+					break;
+				case 0:
+					System.out.println("Returning to Main Menu...");
+					employeePortal = false;
+					break;
+			}
+		}
+	}
 }
 

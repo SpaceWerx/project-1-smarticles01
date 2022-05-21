@@ -1,8 +1,27 @@
 package com.revature;
 
 import java.io.Console;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import Controller.Menu;
+import Utilities.ConnectionFactory;
 
 public class StartUp {
+	public static void main(String[] args)throws SQLException {
+		//Testing Database Connectivity - just testing whether our Connection (from ConnectionFactory) is successful
+		try(Connection conn = ConnectionFactory.getConnection()){
+			System.out.println("Connection Successful :)");
+		} catch(SQLException e) {
+			System.out.println("Connection failed");
+			e.printStackTrace();
+		}
+	}
+	//make menu run
+	//Menu menu = new Menu();
+	
+	//menu.displayMenu();
+	
 	private static int _select;
 	
 	//entry to main menu//

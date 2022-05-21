@@ -10,13 +10,14 @@ import java.util.List;
 
 import javax.management.Query;
 
+import DAO.userDAO;
 import Models.Roles;
 import Models.Users_;
 
 public class User_Services {
 	public static void main(String[] args) {
 		User_Services us = new User_Services();
-		Users_DAO uDAO = new Users_DAO();
+		userDAO uDAO = new userDAO();
 		
 	}
 	//get user by username method//
