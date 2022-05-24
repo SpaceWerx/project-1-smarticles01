@@ -9,7 +9,7 @@ import Models.Users_;
 
 public class Reimbursement_Services {
 	//update
-	public void update(Reimbursement_ unprocessedReimbusement, int resolverId, Status updatedStatus) {
+	public static void update(Reimbursement_ unprocessedReimbusement, int resolverId, Status updatedStatus) {
 		for(Reimbursement_ reimbursement : reimbursements) {
 			if(reimbursement.getId() == unprocessedReimbursement.getId()) {
 				reimbursement.setResolver(resolverId);
@@ -21,7 +21,7 @@ public class Reimbursement_Services {
 	}
 	
 	//submit	
-	public void submitReimbursement(Reimbursement_ reimbursementToBeSubmitted) {
+	public static void submitReimbursement(Reimbursement_ reimbursementToBeSubmitted) {
 		Reimbursement_ latestReimbursement = reimbursements.get(reimbursements.size() - 1);
 		//increment id number by 1//
 		int id = latestReimbursement.getId() + 1;
@@ -32,7 +32,7 @@ public class Reimbursement_Services {
 	}
 	
 	//resolved
-	public List<Reimbursement_> getResoledReimbursements(){
+	public static List<Reimbursement_> getResoledReimbursements(){
 		List<Reimbursement_> resolvedReimbursements = new ArrayList<>();
 		
 		for(Reimbursement_ reimbursement : reimbursements) {
@@ -44,7 +44,7 @@ public class Reimbursement_Services {
 	}
 	
 	//pending
-	public List<Reimbursement_> getPendingReimbursements(){
+	public static List<Reimbursement_> getPendingReimbursements(){
 		List<Reimbursement_> pendingReimbursements = new ArrayList<>();>
 		
 		for(Reimbursement_ reimbursement : reimbursements) {
@@ -56,7 +56,7 @@ public class Reimbursement_Services {
 	}
 	
 	//id
-	public Reimbursement_ getReimbursementById(int id) {
+	public static Reimbursement_ getReimbursementById(int id) {
 		for(Reimbursement_ reimbursement : reimbursements) {
 			if(reimbursement.getId() == id) {
 				return reimbursement;
@@ -66,7 +66,7 @@ public class Reimbursement_Services {
 	}
 	
 	//author
-	public List<Reimbursement_> getReimbursementsByAuthor(int userId){
+	public static List<Reimbursement_> getReimbursementsByAuthor(int userId){
 		List<Reimbursement_> userReimbursements = new ArrayList<>();
 		
 		for(Reimbursement_ r : reimbursements) {
@@ -75,5 +75,10 @@ public class Reimbursement_Services {
 			}
 		}
 		return userReimbursements;
+	}
+
+	public static Users_ getUserById(int userChoice) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

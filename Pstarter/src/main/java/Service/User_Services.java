@@ -32,7 +32,7 @@ public class User_Services {
 	}
 	
 	//get user by id method//
-	public List<Users_> getUserById(int id){
+	public static Users_ getUserById(int id){
 		List<Users_> user = uDAO.getUserById(id);
 		return user;
 	}

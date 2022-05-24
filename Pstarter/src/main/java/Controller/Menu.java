@@ -1,6 +1,7 @@
 package Controller;
 
 import java.util.List;
+import java.util.Scanner;
 
 import javax.management.relation.Role;
 
@@ -28,7 +29,7 @@ public class Menu {
 		System.out.println("3 -> Food");
 		System.out.println("4 -> Other");
 		
-		int typeDecision = promptSelection(validEntries: 1,2,3,4);
+		int typeDecision = promptSelection(1,2,3,4);
 		
 		switch(typeDecision) {
 		case 1:
@@ -64,7 +65,7 @@ public class Menu {
 		
 		System.out.println("Please enter a description/reason for your reimbursement request.");
 		
-		reimbursementToBeSubmitted.setDescription(scan.nextLine());
+		reimbursementToBeSubmitted.setDescription(Scanner.nextLine());
 		if(reimbursementToBeSubmitted.getDescription().trim().equals("")) {
 			System.out.println("You cannot submit a request with an empty description, please explain the reason for your request.");
 			
@@ -76,7 +77,7 @@ public class Menu {
 				}
 			}
 		}
-		Reimbursement_Services.submitReimbursement_(reimbursementToBeSubmitted);
+		Reimbursement_Services.submitReimbursement(reimbursementToBeSubmitted);
 	}
 	
 	
@@ -110,7 +111,7 @@ public class Menu {
 	public void processReimbursement(Users_ manager) {
 		boolean processPortal = true;
 		System.out.println("---------------------------");
-		System.out.println("Welcome to the Manager Processing Portal, " + manager.getusername());
+		System.out.println("Welcome to the Manager Processing Portal, " + manager.getUsername());
 		System.out.println("---------------------------");
 		System.out.println();
 		
@@ -128,7 +129,7 @@ public class Menu {
 			for(int i = 0; i < reimbursements.size(); i++) {
 				Reimbursement_ r = reimbursements.get(i);
 				Users_ author = User_Services.getUserById(r.getAuthor());
-				System.out.println(r.getId()) + " -> " + author.getUsername() + " : $" + r.getAmount());
+				System.out.println(r.getId() + " -> " + author.getUsername() + " : $" + r.getAmount());
 				ids[i] = r.getId();
 			}
 			
@@ -148,7 +149,7 @@ public class Menu {
 			System.out.println("1 -> Approve");
 			System.out.println("2 -> Deny");
 			
-			int decision = promptSelection(...validEntries 1,2);
+			int decision = promptSelection(1,2);
 			Status status = (decision == 1) ? Status.approved : Status.denied;
 			Reimbursement_Services.update(reimbursementToBeProcessed, manager.getId(),status);
 			
@@ -157,7 +158,7 @@ public class Menu {
 			System.out.println("1 -> Yes");
 			System.out.println("2 -> No");
 			
-			int lastChoice = promptSelection(...validEntries 1,2);
+			int lastChoice = promptSelection( 1,2);
 			
 			if(lastChoice == 2) {
 				processPortal = false;
@@ -207,9 +208,9 @@ public class Menu {
 		int userChoice = promptSelection(ids);
 		
 		if(userChoice == 0) {
-			return;
+			return 0;
 		}
-		Users_ employee = Reimbursement_Services.getUserById(userchoice);
+		Users_ employee = Reimbursement_Services.getUserById(userChoice);
 		
 		if(role == Roles.manager) {
 			System.out.println("Opening Manager Portal for " + employee.getUsername());
@@ -225,7 +226,7 @@ public class Menu {
 		//scan.nextLine() gets whole line including whitespace//
 		//scan.split() gets line and separates into arrays by whitespace//
 		//scan[0] keeps only the first element//
-		return scan.nextLine().split(regex:" ")[0];
+		return Scanner.nextLine().split(regex:" ")[0];
 	}
 	
 	public void displayPendingReimbursements() {
@@ -241,7 +242,7 @@ public class Menu {
 	}
 	
 	public void displayResolvedReimbursements() {
-		List<Reimbursement_> resolvedReimbursements - Reimbursement_Services.getResolvedReimbursements();
+		List<Reimbursement_> resolvedReimbursements = Reimbursement_Services.getResoledReimbursements();
 		
 		if(resolvedReimbursements.isEmpty()) {
 			System.out.println("No resolved Requests...");
@@ -253,7 +254,7 @@ public class Menu {
 	}
 	
 	public void displayPreviousRequests(Users_ employee) {
-		List<Reimbursement_>reimbursements = Reimbursement_Services.getReimbursemetsByAuthor(employee.getId());
+		List<Reimbursement_>reimbursements = Reimbursement_Services.getReimbursementsByAuthor(employee.getId());
 		
 		if(reimbursements.isEmpty()) {
 			System.out.println("No Previous Requests.....");
@@ -280,14 +281,14 @@ public class Menu {
 			System.out.println("0 -> Exit Aplication");
 			
 			//parameters list of valid options that user can input
-			int firstChoice = promptSelection(...validEntries 1, 2, 0);
+			int firstChoice = promptSelection(1, 2, 0);
 			
 			switch(firstChoice) {
 				case 1:
-					handlePortal(Role.employee);
+					handlePortal(Roles.employee);
 					break;
 				case 2:
-					handlePortal(Role.manager);
+					handlePortal(Roles.manager);
 					break;
 				case 0:
 					System.out.println("\nHave a great day! Goodbye!");
@@ -296,6 +297,13 @@ public class Menu {
 			}
 		}
 	}
+	private void handlePortal(Roles employee) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
 	public void displayFinanceManagerMenu(Users_ manager) {
 		boolean managerPortal = true;
 		
@@ -313,7 +321,7 @@ public class Menu {
 			System.out.println("0 -> Return to Main Menu");
 			
 			//parameters list of valid options that user can input
-			int firstChoice = promptSelection(...validEntries 1, 2, 3, 4,0);
+			int firstChoice = promptSelection(1, 2, 3, 4, 0);
 			
 			switch(firstChoice) {
 				case 1:
@@ -350,7 +358,7 @@ public class Menu {
 			System.out.println("0 -> Return to Main Menu");
 			
 			//parameters list of valid options that user can input
-			int firstChoice = promptSelection(...validEntries 1, 2, 0);
+			int firstChoice = promptSelection(1, 2, 0);
 			
 			switch(firstChoice) {
 				case 1:
