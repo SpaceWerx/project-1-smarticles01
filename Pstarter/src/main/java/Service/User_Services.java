@@ -13,64 +13,45 @@ import javax.management.Query;
 import DAO.userDAO;
 import Models.Roles;
 import Models.Users_;
-
+i
 public class User_Services {
-	public static void main(String[] args) {
-		User_Services us = new User_Services();
-		userDAO uDAO = new userDAO();
-		
-	}
-	//get user by username method//
-	public List<Users_> getusername() throws SQLException {
-		List<Users_> users = uDAO.getusername(username);
-		
+	userDAO uDAO = new userDAO();
+	
+	
+	//get all users//
+	public List<Users_> getAllUsers() throws SQLException{
+		List<Users_> users = uDAO.getAllUsers();
 		return users;
 	}
+	
+	//get user by username method//
+	public List<Users_> getUserByUsername() throws SQLException {
+		List<Users_> user = uDAO.getusername(username);
+		
+		return user;
+	}
+	
 	//get user by id method//
+	public List<Users_> getUserById(int id){
+		List<Users_> user = uDAO.getUserById(id);
+		return user;
+	}
+	
 	//query user exists by id method//
 	public List<Users_> getid(int id) throws SQLException {
 		List<Users_> users = uDAO.getid(id);
-		
-		try(Connection conn = ConnectionFactory.getConnection()){
-			ResultSet rs = null;
-			
-			String sql = "select * from users where id = ?;";
-			
-			PreparedStatement ps = conn.prepareStatement(sql);
-			
-			ps.setInt(1,  id);
-			rs = ps.executeQuery();
-			
-			List<Users_> users_List = new ArrayList<>();
-			
-			while(rs.next()) {
-				Users_ u = new Users_(
-						rs.getInt("id"),
-						rs.getString("username"),
-						rs.getString("password"),
-						rs.getString("role")
-						);
-				users_List.add(e);
-			}
-			return users_List;
-		}
-		catch(SQLException e) {
-			System.out.println("Something went wrong, we were unable to find that ID.  Please try again.");
-			e.printStackTrace();
-			return null;
-		}
 		return users;
-	}
-	//get all users method//
-	public List<Users_> getall(Users_ allusers) throws SQLException {
-		List<Users_> users = uDAO.getusername(allusers);
 		
-		return users;
-	}
+	}	
 	//get user by role method//
 	public List<Users_> Role(Roles role) throws SQLException {
 		List<Users_> users = uDAO.Roles(role);
 		
 		return users;
+	}
+	
+	//create new user//
+	public void insertUser(Users_ newUser) throws SQLException{
+		uDAO.insertUser(newUser);
 	}
 }

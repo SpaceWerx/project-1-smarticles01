@@ -2,6 +2,7 @@ package Models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.management.relation.Role;
 
@@ -12,27 +13,71 @@ public class Users_ {
 	private String username;
 	private String password;
 	private Roles role;
-	
 	public Users_() {
-		Users_ Rapmon = new Users_(id: 1, username: "Rapmon", password: "password", Role.employee);
-		Users_ V = new Users_(id: 2, username: "V", password: "password", Role.employee);
-		Users_ Jimin = new Users_(id: 3, username: "Jimin", password: "password", Role.employee);
-		Users_ Suga = new Users_(id: 4, username: "Suga", password: "password", Role.manager);
-		Users_ JHope = new Users_(id: 5, username: "JHope", password: "password", Role.manager);
-		Users_ Kookie = new Users_(id: 6, username: "Kookie", password: "password", Role.manager);
-		
-		users.add(Rapmon);
-		users.add(V);
-		users.add(Jimin);
-		users.add(Suga);
-		users.add(JHope);
-		users.add(Kookie);
+		super();
+		// TODO Auto-generated constructor stub
 	}
-	
-	
-	public List<Users_> getUsers(){
+	public Users_(int id, String username, String password, Roles role) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.role = role;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public Roles getRole() {
+		return role;
+	}
+	public void setRole(Roles role) {
+		this.role = role;
+	}
+	public List<Users_> getUsers() {
 		return users;
 	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, password, role, username, users);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Users_ other = (Users_) obj;
+		return id == other.id && Objects.equals(password, other.password) && role == other.role
+				&& Objects.equals(username, other.username) && Objects.equals(users, other.users);
+	}
+	@Override
+	public String toString() {
+		return "Users_ [users=" + users + ", id=" + id + ", username=" + username + ", password=" + password + ", role="
+				+ role + "]";
+	}
+	public static void add(Users_ rapmon) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 }
 
-}
+

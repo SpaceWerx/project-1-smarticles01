@@ -22,7 +22,7 @@ public class StartUp {
 	
 	//menu.displayMenu();
 	
-	private static int _select;
+/*	private static int _select;
 	
 	//entry to main menu//
 	public static void RootMenu() {
@@ -45,5 +45,5 @@ public class StartUp {
 	public static void ReturnRootMenu() {
 		Console.Clear();
 		RootMenu();
-	}
+	}*/
 }

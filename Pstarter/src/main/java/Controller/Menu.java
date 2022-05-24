@@ -183,7 +183,7 @@ public class Menu {
 			return -1;
 		}
 		
-	public void handlePortal(Roles role) {
+	public handlePortal(Roles role) {
 		//get the list of employees//
 		List<Users_> users = User_Services.getByRole(role);
 		

@@ -8,10 +8,15 @@ public class AuthorizeService {
 	public int register(Users_ userToBeRegistered) {
 		
 		//check  if username exists, so if null username available
-		if(userDAO.getByUsername(userToBeRegistered.getUsername()) != null) {
-			
-			//userame already exists
-			throw new NullPointerException("Username already exists. Modify your input.");
+		try {
+			if(userDAO.getUserByUsername(userToBeRegistered.getUsername()) != null) {
+				
+				//userame already exists
+				throw new NullPointerException("Username already exists. Modify your input.");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		//take in user object sent from menu ad sent to userDAO to insert into Database
 		//after entry's made, the id of the new user's returned
@@ -25,7 +30,7 @@ public class AuthorizeService {
 		//use try+catch to catch any exceptions thrown by userDAO
 		try {
 			//get user data from username given
-			user = userDAO.getByUsername(username);
+			user = userDAO.getUserByUsername(username);
 			
 			//check if user exists
 			if(user != null) {
