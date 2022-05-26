@@ -1,8 +1,11 @@
 package com.revature;
 
+import java.util.List;
+
 import Models.Reimbursement_;
 import Models.Status;
 import Models.Type;
+import Models.Users_;
 
 public class MockReimbursement {
 	public void Reimbursement_() {
@@ -23,9 +26,8 @@ public class MockReimbursement {
 		Reimbursement_.add(Denied);
 	}
 	
-	public List<Reimbursement_>(){ 
-		getReimbursements();
-	return reimbursements;
+	public List<Reimbursement_> getReimbursement(){
+		return null;
 	}
 	
 	
@@ -48,4 +50,5 @@ public class MockReimbursement {
 			
 		break;
 	}
+}
 }

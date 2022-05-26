@@ -13,7 +13,7 @@ import javax.management.Query;
 import DAO.userDAO;
 import Models.Roles;
 import Models.Users_;
-i
+import Models.Users_;
 public class User_Services {
 	userDAO uDAO = new userDAO();
 	
@@ -23,14 +23,14 @@ public class User_Services {
 		List<Users_> users = uDAO.getAllUsers();
 		return users;
 	}
-	
+	////////////////////////////////////////////////////////////o,limkjnjbv
 	//get user by username method//
 	public List<Users_> getUserByUsername() throws SQLException {
 		List<Users_> user = uDAO.getusername(username);
 		
 		return user;
 	}
-	
+	////////////////////////////////////////////////////////
 	//get user by id method//
 	public static Users_ getUserById(int id){
 		List<Users_> user = uDAO.getUserById(id);
