@@ -22,7 +22,7 @@ public class Reimbursement_ {
 	
 
 
-	public Reimbursement_(int id, int i, int j, String description, Type type, Status status,
+	public Reimbursement_(int id, String i, int j, String description, Type type, Status status,
 			double amount) {
 		super();
 		this.id = id;
@@ -165,4 +165,4 @@ public class Reimbursement_ {
 	}
 }
 
-}
+

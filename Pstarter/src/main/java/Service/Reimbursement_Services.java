@@ -1,5 +1,7 @@
 package Service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class Reimbursement_Services {
 	}
 	
 	//submit	
-	public static void submitReimbursement(Reimbursement_ reimbursementToBeSubmitted) {
+	public static int submitReimbursement(Reimbursement_ reimbursementToBeSubmitted) {
 		Reimbursement_ latestReimbursement = reimbursements.get(reimbursements.size() - 1);
 		//increment id number by 1//
 		int id = latestReimbursement.getId() + 1;
@@ -111,7 +113,7 @@ public class Reimbursement_Services {
 		);
 		
 		verify(reimbursementDAO, never()).create(Reimbursement_To_Process);
-		verify(User_Services).getUserById(Rapmon.getId());
+		verify(user_Services).getUserById(Rapmon.getId());
 	}
 	
 	@Test
@@ -121,7 +123,7 @@ public class Reimbursement_Services {
 		assertEquals(Status.approved, Reimbursement_Services.update(Reimbursement_To_Process, Rapmon.getId(), Status.approved).getStatus());
 		
 		verify(reimbursementDAO).update(Reimbursement_To_Process);
-		verify(User_Services).getUserById(Rapmon.getId());
+		verify(user_Services).getUserById(Rapmon.getId());
 	}
 	
 	@Test
@@ -131,7 +133,7 @@ public class Reimbursement_Services {
 		assertEquals(Rapmon.getId(), Reimbursement_Services.update(Reimbursement_To_Process, Rapmon.getId(), Status.approved).getResolver());
 		
 		verify(reimbursementDAO).update(Reimbursement_To_Process);
-		verify(User_Services).getUserById(Rapmon.getId());
+		verify(user_Services).getUserById(Rapmon.getId());
 	}
 	
 	private static ReimbursementService Reimbursement_Services;
@@ -147,18 +149,18 @@ public class Reimbursement_Services {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
-		Reimbursement_Services = new ReimbursementService();
+		Reimbursement_Services = new Reimbursement_Services();
 	}
 	
 	@Before
 	public void setUp() throws Exception{
-		User_Services = mock(UserService.class);
+		user_Services = mock(User_Services.class);
 		reimbursementDAO = mock(DAO.reimbursementDAO.class);
 		
 		MockReimbursement mockReimbursement = new MockReimbursement();
 		
 		Reimbursement_Services.reimbursementDAO = reimbursementDAO;
-		Reimbursement_Services.User_Services = User_Services;
+		Reimbursement_Services.User_Services = user_Services;
 		Rapmon = new Users_(1, "Rapmon", "password", Roles.employee);
 		Suga = new Users_(1, "Suga", "password", Roles.manager);
 		Reimbursement_To_Process = new Reimbursement_(2, Rapmon.getId(), "Oracle Certification", Type.other, Status.pending, 150.00);
@@ -201,5 +203,65 @@ public class Reimbursement_Services {
 		assertEquals(mockPendingReimbursements, Reimbursement_Services.getPendingReimbursements());
 		
 		verify(reimbursementDAO).getReimbursementsByStatus(Status.pending);
+	}
+	
+	//handles submission, processing and retrieval of reimbursements//
+	public class Reimbursement_Services{
+		reimbursementDAO reimbursementDAO = new reimbursementDAO();
+		User_Services userService = new User_Services();
+		
+		//retrieves pending reimbursements//
+		public List<Reimbursement_> getPendingReimbursements(){
+			
+			return reimbursementDAO.getReimbursementByStatus(Status.pending);
+		}
+		
+		//return combined list of reimbursements status'd as either approved or denied//
+		public List<Reimbursement_> getResolvedReimbursements(){
+			List<Reimbursement_> resolvedReimbursements = new ArrayList<>();
+			
+			resolvedReimbursements.addAll(reimbursementDAO.getReimbursementsByStatus(Status.approved));
+			resolvedReimbursements.addAll(reimbursementDAO.getReimbursementsByStatus(Status.denied));
+			
+			return resolvedReimbursements;
+		}
+		
+		//accept new reimbursement submission from employees only and return positive integer
+		public int submitReimbursement(Reimbursement_ reimbursementToBeSubmitted) {
+			Users_ employee = User_Services.getUserById(reimbursementToBeSubmitted.getAuthor());
+			
+			if(employee.getRole() != Roles.employee) {
+				throw new IllegalArgumentException("Managers can't submit reimbursement requests here.");
+			}else {
+				reimbursementToBeSubmitted.setStatus(Status.pending);
+				
+				return reimbursementDAO.create(reimbursementToBeSubmitted);
+			}
+		}
+	}
+	
+	//returns updated fields of full reimbursement, manager id, new status, and ensure manager role//
+	public Reimbursement_ update(Reimbursement_ unprocessedReimbursement, int resolverId, Status updatedStatus) {
+		Users_ manager = User_Services.getUserById(resolverId);
+		
+		if(manager.getRole() != Roles.manager) {
+			throw new IllegalArgumentException("An employee can't process reimbursement requests.");
+		}else {
+			unprocessedReimbursement.setResolver(resolverId);
+			unprocessedReimbursement.setStatus(updatedStatus);
+			reimbursementDAO.update(unprocessedReimbursement);
+			
+			return unprocessedReimbursement;
+		}
+	}
+	
+	public Reimbursement_ getReimbursementsById(int id) {
+		
+		return reimbursementDAO.getReimbursementsById(id);
+	}
+	
+	public List<Reimbursement_> getReimbursementsByAuthor2(int userId){
+		
+		return reimbursementDAO.getReimbursementsByUser(userId);
 	}
 }

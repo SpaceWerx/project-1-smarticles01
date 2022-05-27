@@ -5,10 +5,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import Controller.Menu;
+import Controller.UserController;
 import Utilities.ConnectionFactory;
+import io.javalin.Javalin;
 
 public class StartUp {
 	public static void main(String[] args)throws SQLException {
+		UserController uc = new UserController();
+		
 		//Testing Database Connectivity - just testing whether our Connection (from ConnectionFactory) is successful
 		try(Connection conn = ConnectionFactory.getConnection()){
 			System.out.println("Connection Successful :)");
@@ -16,7 +20,7 @@ public class StartUp {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 		}
-	}
+	
 	//make menu run
 	//Menu menu = new Menu();
 	
@@ -46,4 +50,22 @@ public class StartUp {
 		Console.Clear();
 		RootMenu();
 	}*/
+	
+	//Javalin object, creates connection
+	Javalin app = Javalin.create(
+		config -> {
+			config.enableCorsForAllOrigins();
+		}
+	).start(3000);
+	
+	//get endpoints//
+	app.get("/user", uc.getUserHandler);
+	app.post("/user", uc.insertUserHandler);
+	//app.post("/login", null);
+	
+	}
+	
+	
+
+	
 }

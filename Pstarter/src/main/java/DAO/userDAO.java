@@ -28,7 +28,7 @@ public class userDAO {
 						rs.getInt("id"),
 						rs.getString("username"),
 						rs.getString("password"),
-						rs.getRoles("role")
+						rs.getString("role")
 						);
 					userList.add(u);
 			}
@@ -77,7 +77,7 @@ public class userDAO {
 						rs.getInt("id"),
 						rs.getString("username"),
 						rs.getString("password"),
-						rs.getRoles("role")
+						rs.getString("role")
 						);
 					userList.add(u);
 			}
@@ -107,7 +107,7 @@ public class userDAO {
 						rs.getInt("id"),
 						rs.getString("username"),
 						rs.getString("password"),
-						Roles.valueOf(rs.getString("role"))
+						rs.getString("role")
 								);
 					userList.add(u);
 			}

@@ -12,6 +12,7 @@ import Models.Type;
 import Models.Users_;
 import Service.Reimbursement_Services;
 import Service.User_Services;
+import io.javalin.Javalin;
 
 public class Menu {
 	/*EmployeeStatus es = new EmployeeStatus();
@@ -183,10 +184,11 @@ public class Menu {
 			//rejects other validation contingencies//
 			return -1;
 		}
+	}
 		
-	public handlePortal(Roles role) {
+	public void handlePortal(Roles role) {
 		//get the list of employees//
-		List<Users_> users = User_Services.getByRole(role);
+		List<Users_> users = User_Services.getReimbursementsByRole(role);
 		
 		int[] ids = new int [users.size() + 1];
 		ids[users.size()] = 0;
@@ -208,7 +210,7 @@ public class Menu {
 		int userChoice = promptSelection(ids);
 		
 		if(userChoice == 0) {
-			return 0;
+			return;
 		}
 		Users_ employee = Reimbursement_Services.getUserById(userChoice);
 		
@@ -220,7 +222,7 @@ public class Menu {
 			displayEmployeeMenu(employee);
 		}
 	}
-	}
+	
 	
 	public String fetchInput() {
 		//scan.nextLine() gets whole line including whitespace//
@@ -297,7 +299,7 @@ public class Menu {
 			}
 		}
 	}
-	private void handlePortal(Roles employee) {
+	private void handlePortal2(Roles employee) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -374,5 +376,57 @@ public class Menu {
 			}
 		}
 	}
+	
+	//starts javalin on desired port//
+	public void start(int port) {
+		this.app.start(port);
+	} 
+	
+	//instantiate controllers to access methods for route config//
+	AuthController authController = new AuthController();
+	UserController userController = new UserController();
+	ReimbursementController reimbursementController = new ReimbursementController();
+	
+	//creates javalin app to designate routes and enables CORS for all origins to avoid http request constraints//
+	Javalin app = Javalin.create(
+			config -> {
+				config.enableCorsForAllOrigins();
+			}
+		).start(3000);
+	
+		
+		//set login path
+		path("login", ()->{
+			post(authController::handleLogin);
+		});
+		
+		//set register path
+		path("register", ()->{
+			post(authController::handleRegister);
+		});
+		
+		//set users path
+		path("users", ()->{
+			get(userController::handleGetUsers);
+			
+			//set sub-path to request by id through user
+			path("{id}", ()->{
+				get(userController::handleGetUserById);
+			});
+		});
+		
+		//set reimbursement path
+		path("reimbursements", ()->{
+			get(reimbursementController::handleGetReimbursements);
+			post(reimbursementController::handleSubmit);
+			
+			//set sub-path to request by id through reimbursement
+			path("{id}", ()->{
+					get(reimbursementController::handleGetReimbursementById);
+					put(reimbursementController::handleProcess);
+			});
+		});
+	});
+	
 }
 

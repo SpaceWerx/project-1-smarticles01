@@ -5,7 +5,7 @@ import Models.Users_;
 
 public class AuthorizeService {
 	//make new user object
-	public int register(Users_ userToBeRegistered) {
+	public static int register(Users_ userToBeRegistered) {
 		
 		//check  if username exists, so if null username available
 		try {
@@ -23,7 +23,7 @@ public class AuthorizeService {
 		return userDAO.create(userToBeRegistered);
 	}
 	
-	public Users_ login(String username, String password) {
+	public static Users_ login(String username, String password) {
 		//temp user
 		Users_ user;
 		

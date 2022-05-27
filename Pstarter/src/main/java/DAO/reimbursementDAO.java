@@ -15,7 +15,7 @@ import Utilities.ConnectionFactory;
 
 public class reimbursementDAO {
 	public void update(Reimbursement_ unprocessedReimbursement) {
-		try(Connection connection = ConnectionFactoryUtility.getConnection()){
+		try(Connection connection = ConnectionFactory.getConnection()){
 			String sql = "UPDATE ers_reimbursements SET resolver = ?, status = ?::status WHERE id = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			
@@ -32,7 +32,7 @@ public class reimbursementDAO {
 		}
 	}
 	public List<Reimbursement_> getReimbursementsByUser(int userId){
-		try(Connection connection = ConnectionFactoryUtility.getConnection()){
+		try(Connection connection = ConnectionFactory.getConnection()){
 			String sql = "select * from ers_reimbursements where author = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, userId);
@@ -43,7 +43,7 @@ public class reimbursementDAO {
 			while(resultSet.next()){
 				reimbursements.add(new Reimbursement_(
 						resultSet.getInt("id"),
-						resultSet.getInt("author"),
+						resultSet.getString("author"),
 						resultSet.getInt("resolver"),
 						resultSet.getString("description"),
 						Type.valueOf(resultSet.getString("type")),
@@ -61,7 +61,7 @@ public class reimbursementDAO {
 	}
 	
 	public Reimbursement_ getReimbursementsById(int id) {
-		try(Connection connection = ConnectionFactoryUtility.getConnection()){
+		try(Connection connection = ConnectionFactory.getConnection()){
 			String sql = "select * from ers_reimbursements where id = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
@@ -70,7 +70,7 @@ public class reimbursementDAO {
 			if(resultSet.next()) {
 				return new Reimbursement_(
 						resultSet.getInt("id"),
-						resultSet.getInt("author"),
+						resultSet.getString("author"),
 						resultSet.getInt("resolver"),
 						resultSet.getString("description"),
 						Type.valueOf(resultSet.getString("type")),
@@ -87,10 +87,10 @@ public class reimbursementDAO {
 	}
 
 	public List<Reimbursement_> getReimbursementsByStatus(int id) {
-		try(Connection connection = ConnectionFactoryUtility.getConnection()){
+		try(Connection connection = ConnectionFactory.getConnection()){
 			String sql = "select * from ers_reimbursements where status = ?::status";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, status.toString());
+			preparedStatement.setString(1, Status.toString());
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			List<Reimbursement_> reimbursements = new ArrayList<>();
@@ -98,7 +98,7 @@ public class reimbursementDAO {
 			while(resultSet.next()) {
 				reimbursements.add(new Reimbursement_(
 						resultSet.getInt("id"),
-						resultSet.getInt("author"),
+						resultSet.getString("author"),
 						resultSet.getInt("resolver"),
 						resultSet.getString("description"),
 						Type.valueOf(resultSet.getString("type")),
@@ -116,7 +116,7 @@ public class reimbursementDAO {
 	}
 	
 	public List<Reimbursement_> getAllReimbursements(){
-		try(Connection connection = ConnectionFactoryUtility.getConnection()){
+		try(Connection connection = ConnectionFactory.getConnection()){
 			List<Reimbursement_> reimbursements = new ArrayList<>();
 			String sql = "Select * from ers_reimbursements";
 			Statement statement = connection.createStatement();
@@ -125,7 +125,7 @@ public class reimbursementDAO {
 			while(resultSet.next()) {
 				reimbursements.add(new Reimbursement_(
 						resultSet.getInt("id"),
-						resultSet.getInt("author"),
+						resultSet.getString("author"),
 						resultSet.getInt("resolver"),
 						resultSet.getString("description"),
 						Type.valueOf(resultSet.getString("type")),
@@ -143,7 +143,7 @@ public class reimbursementDAO {
 	}
 	
 	public int create(Reimbursement_ reimbursementToBeSubmitted) {
-		try(Connection connection = ConnectionFactoryUtility.getConnection()){
+		try(Connection connection = ConnectionFactory.getConnection()){
 			String sql = "INSERT INTO ers_reimbursements (author, description, type, status, amount)"
 					+ "VALUES (?, ?, ?::type, ?::status, ?)"
 					+ "RETURNING ers_reimbursements.id";
