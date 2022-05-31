@@ -12,12 +12,14 @@ public class Users_ {
 	private int id;
 	private String username;
 	private String password;
-	private String role;
+	private Roles role;
+	
+	
 	public Users_() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Users_(int id, String username, String password, String role) {
+	public Users_(int id, String username, String password, Roles role) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -42,10 +44,10 @@ public class Users_ {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getRole() {
+	public Roles getRole() {
 		return role;
 	}
-	public void setRole(String role) {
+	public void setRole(Roles role) {
 		this.role = role;
 	}
 	public List<Users_> getUsers() {

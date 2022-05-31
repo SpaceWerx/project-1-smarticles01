@@ -6,13 +6,14 @@ import java.sql.SQLException;
 
 import Controller.Menu;
 import Controller.UserController;
+import DAO.userDAO;
 import Utilities.ConnectionFactory;
 import io.javalin.Javalin;
 
 public class StartUp {
 	public static void main(String[] args)throws SQLException {
 		UserController uc = new UserController();
-		
+		//userDAO ud = new userDAO();
 		//Testing Database Connectivity - just testing whether our Connection (from ConnectionFactory) is successful
 		try(Connection conn = ConnectionFactory.getConnection()){
 			System.out.println("Connection Successful :)");
@@ -21,16 +22,17 @@ public class StartUp {
 			e.printStackTrace();
 		}
 	
+		//System.out.println(ud.getAllUsers());
 	//make menu run
-	//Menu menu = new Menu();
+	Menu menu = new Menu();
 	
-	//menu.displayMenu();
+	menu.displayMenu();
 	
-/*	private static int _select;
+	//int _select;
 	
-	//entry to main menu//
+	/*//entry to main menu//
 	public static void RootMenu() {
-		Console.WriteLine(@"application with exit");
+		Console.WriteLine("application with exit");
 	}
 	
 	//User input to determine which selection displayed//
@@ -38,7 +40,7 @@ public class StartUp {
 	
 	if(_select == 1) {
 		Console.Clear();
-		Console.WriteLine(@"Selection with options");
+		Console.WriteLine("Selection with options");
 	}
 	//User input to go back to main menu//
 	if(_select == 5) {
@@ -51,21 +53,54 @@ public class StartUp {
 		RootMenu();
 	}*/
 	
-	//Javalin object, creates connection
+	/*//Javalin object, creates connection
 	Javalin app = Javalin.create(
 		config -> {
 			config.enableCorsForAllOrigins();
 		}
-	).start(3000);
+	).start(4000);
 	
 	//get endpoints//
 	app.get("/user", uc.getUserHandler);
 	app.post("/user", uc.insertUserHandler);
-	//app.post("/login", null);
+	/*app.post("/login", uc.loginHandler);
 	
+	
+	//set login path
+			path("login", ()->{
+				post(authController::handleLogin);
+			});
+			
+			//set register path
+			path("register", ()->{
+				post(authController::handleRegister);
+			});
+			
+			//set users path
+			path("users", ()->{
+				get(userController::handleGetUsers);
+				
+				//set sub-path to request by id through user
+				path("{id}", ()->{
+					get(userController::handleGetUserById);
+				});
+			});
+			
+			//set reimbursement path
+			path("reimbursements", ()->{
+				get(reimbursementController::handleGetReimbursements);
+				post(reimbursementController::handleSubmit);
+				
+				//set sub-path to request by id through reimbursement
+				path("{id}", ()->{
+						get(reimbursementController::handleGetReimbursementById);
+						put(reimbursementController::handleProcess);
+				});
+			});
+		};*/
 	}
 	
-	
+}
+
 
 	
-}

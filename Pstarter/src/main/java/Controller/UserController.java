@@ -11,14 +11,33 @@ import io.javalin.http.Handler;
 public class UserController {
 	User_Services us = new User_Services();
 	
-	//get all users
-	
-	
 	//get by username
+	public Handler getUserByUsernameHandler = (ctx)->{
+		Users_ user = User_Services.getUserByUsername(null);
+		Gson gson = new Gson();
+		
+		String JSONObject = gson.toJson(user);
+		
+		ctx.result(JSONObject);
+		ctx.status(200);
+	};
+
+	private int id;
 	
 	
 	//get by id
+	public Handler getUserByIdHandler = (ctx)->{
+		Users_ user = us.getUserById(id);
+		Gson gson = new Gson();
+		
+		String JSONObject = gson.toJson(user);
+		
+		ctx.result(JSONObject);
+		ctx.status(200);
+	};
 	
+	
+	//gets all users
 	public Handler getUserHandler = (ctx)->{
 		List<Users_> allUsers = us.getAllUsers();
 		Gson gson = new Gson();

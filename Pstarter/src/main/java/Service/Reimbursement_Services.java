@@ -1,6 +1,6 @@
 package Service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+//import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,33 +16,37 @@ import DAO.reimbursementDAO;
 
 public class Reimbursement_Services {
 	//update
-	public static void update(Reimbursement_ unprocessedReimbusement, int resolverId, Status updatedStatus) {
-		for(Reimbursement_ reimbursement : reimbursements) {
-			if(reimbursement.getId() == unprocessedReimbusement.getId()) {
+	public static Reimbursement_ update(Reimbursement_ unprocessedReimbursement, int resolverId, Status updatedStatus) {
+		List<Reimbursement_> userReimbursements = new ArrayList<>();
+		for(Reimbursement_ reimbursement : userReimbursements) {
+			if(reimbursement.getId() == unprocessedReimbursement.getId()) {
 				reimbursement.setResolver(resolverId);
 				reimbursement.setStatus(updatedStatus);
-				return;
+				return unprocessedReimbursement;
 			}
 		}
 		throw new RuntimeException("There was an error processing this reimbursement, please try again.");
 	}
 	
 	//submit	
-	public static int submitReimbursement(Reimbursement_ reimbursementToBeSubmitted) {
-		Reimbursement_ latestReimbursement = reimbursements.get(reimbursements.size() - 1);
-		//increment id number by 1//
-		int id = latestReimbursement.getId() + 1;
+	public int submitReimbursement(Reimbursement_ reimbursementToBeSubmitted) {
+		reimbursementDAO rDAO = new reimbursementDAO();
+		Users_ employee = Reimbursement_Services.getUserById(reimbursementToBeSubmitted.getAuthor());
 		
-		reimbursementToBeSubmitted.setId(id);
-		reimbursementToBeSubmitted.setStatus(Status.pending);
-		reimbursements.add(reimbursementToBeSubmitted);
+
+
+        reimbursementToBeSubmitted.setStatus(Status.pending);
+
+
+        return rDAO.create(reimbursementToBeSubmitted);
 	}
 	
 	//resolved
-	public static List<Reimbursement_> getResoledReimbursements(){
+	public static List<Reimbursement_> getResolvedReimbursements(){
+		List<Reimbursement_> userReimbursements = new ArrayList<>();
 		List<Reimbursement_> resolvedReimbursements = new ArrayList<>();
 		
-		for(Reimbursement_ reimbursement : reimbursements) {
+		for(Reimbursement_ reimbursement : userReimbursements) {
 			if(reimbursement.getStatus() == Status.approved || reimbursement.getStatus() == Status.denied) {
 				resolvedReimbursements.add(reimbursement);
 			}
@@ -52,9 +56,10 @@ public class Reimbursement_Services {
 	
 	//pending
 	public static List<Reimbursement_> getPendingReimbursements(){
-		List<Reimbursement_> pendingReimbursements = new ArrayList<>();>
+		List<Reimbursement_> userReimbursements = new ArrayList<>();
+		List<Reimbursement_> pendingReimbursements = new ArrayList<>();
 		
-		for(Reimbursement_ reimbursement : reimbursements) {
+		for(Reimbursement_ reimbursement : userReimbursements) {
 			if(reimbursement.getStatus() == Status.pending) {
 				pendingReimbursements.add(reimbursement);
 			}
@@ -64,7 +69,8 @@ public class Reimbursement_Services {
 	
 	//id
 	public static Reimbursement_ getReimbursementById(int id) {
-		for(Reimbursement_ reimbursement : reimbursements) {
+		List<Reimbursement_> userReimbursements = new ArrayList<>();
+		for(Reimbursement_ reimbursement : userReimbursements) {
 			if(reimbursement.getId() == id) {
 				return reimbursement;
 			}
@@ -76,7 +82,7 @@ public class Reimbursement_Services {
 	public static List<Reimbursement_> getReimbursementsByAuthor(int userId){
 		List<Reimbursement_> userReimbursements = new ArrayList<>();
 		
-		for(Reimbursement_ r : reimbursements) {
+		for(Reimbursement_ r : userReimbursements) {
 			if(r.getAuthor() == userId || r.getResolver() == userId) {
 				userReimbursements.add(r);
 			}
@@ -89,7 +95,7 @@ public class Reimbursement_Services {
 		return null;
 	}
 	
-	
+	/*
 	//Resolver not manager
 	@Test
 	public void testUpdateThrowsIllegalArgumentExceptionWhenResolverIsNotManager() {
@@ -100,7 +106,7 @@ public class Reimbursement_Services {
 		);
 		
 		verify(reimbursementDAO, never()).update(Reimbursement_To_Process);
-		verify(User_Services).getUserById(Rapmon.getId());
+		verify(user_Services).getUserById(Rapmon.getId());
 	}
 	
 	//Submitted by manager
@@ -204,16 +210,16 @@ public class Reimbursement_Services {
 		
 		verify(reimbursementDAO).getReimbursementsByStatus(Status.pending);
 	}
-	
+	*/
 	//handles submission, processing and retrieval of reimbursements//
-	public class Reimbursement_Services{
+	public class ReimbursementHandles{
 		reimbursementDAO reimbursementDAO = new reimbursementDAO();
 		User_Services userService = new User_Services();
 		
 		//retrieves pending reimbursements//
 		public List<Reimbursement_> getPendingReimbursements(){
 			
-			return reimbursementDAO.getReimbursementByStatus(Status.pending);
+			return reimbursementDAO.getReimbursementsByStatus(Status.pending);
 		}
 		
 		//return combined list of reimbursements status'd as either approved or denied//
@@ -236,12 +242,13 @@ public class Reimbursement_Services {
 				reimbursementToBeSubmitted.setStatus(Status.pending);
 				
 				return reimbursementDAO.create(reimbursementToBeSubmitted);
-			}
+			}	
 		}
 	}
 	
 	//returns updated fields of full reimbursement, manager id, new status, and ensure manager role//
-	public Reimbursement_ update(Reimbursement_ unprocessedReimbursement, int resolverId, Status updatedStatus) {
+	public Reimbursement_ updateAllFields(Reimbursement_ unprocessedReimbursement, int resolverId, Status updatedStatus) {
+		reimbursementDAO rDAO = new reimbursementDAO();
 		Users_ manager = User_Services.getUserById(resolverId);
 		
 		if(manager.getRole() != Roles.manager) {
@@ -249,19 +256,16 @@ public class Reimbursement_Services {
 		}else {
 			unprocessedReimbursement.setResolver(resolverId);
 			unprocessedReimbursement.setStatus(updatedStatus);
-			reimbursementDAO.update(unprocessedReimbursement);
+			rDAO.update(unprocessedReimbursement);
 			
 			return unprocessedReimbursement;
 		}
 	}
 	
 	public Reimbursement_ getReimbursementsById(int id) {
+		reimbursementDAO rDAO = new reimbursementDAO();
 		
-		return reimbursementDAO.getReimbursementsById(id);
+		return rDAO.getReimbursementsById(id);
 	}
 	
-	public List<Reimbursement_> getReimbursementsByAuthor2(int userId){
-		
-		return reimbursementDAO.getReimbursementsByUser(userId);
-	}
 }

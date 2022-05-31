@@ -1,7 +1,9 @@
 package Controller;
 
 import java.util.List;
-import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
 
 import javax.management.relation.Role;
 
@@ -12,15 +14,21 @@ import Models.Type;
 import Models.Users_;
 import Service.Reimbursement_Services;
 import Service.User_Services;
+import Utilities.ConnectionFactory;
 import io.javalin.Javalin;
 
 public class Menu {
 	/*EmployeeStatus es = new EmployeeStatus();
 	ManagerStatus ms = new ManagerStatus();
 	*/
+	User_Services us = new User_Services();
+	Reimbursement_Services rs = new Reimbursement_Services();
+	
 	//Menu application with options//
 	public void submitReimbursement(Users_ employee) {
 		Reimbursement_ reimbursementToBeSubmitted = new Reimbursement_();
+		//@SuppressWarnings("resource")
+		Scanner scan = new Scanner(System.in);
 		reimbursementToBeSubmitted.setAuthor(employee.getId());
 		
 		System.out.println("What type of reimbursement would you like to submit?");
@@ -66,7 +74,7 @@ public class Menu {
 		
 		System.out.println("Please enter a description/reason for your reimbursement request.");
 		
-		reimbursementToBeSubmitted.setDescription(Scanner.nextLine());
+		reimbursementToBeSubmitted.setDescription(scan.nextLine());
 		if(reimbursementToBeSubmitted.getDescription().trim().equals("")) {
 			System.out.println("You cannot submit a request with an empty description, please explain the reason for your request.");
 			
@@ -78,7 +86,10 @@ public class Menu {
 				}
 			}
 		}
-		Reimbursement_Services.submitReimbursement(reimbursementToBeSubmitted);
+		rs.submitReimbursement(reimbursementToBeSubmitted);
+		System.out.println("Understandable. Your Reimbursement was not yet submitted and we will have a manager speak with you. Thank you!");
+		System.out.println("Returning to Portal Menu");
+			
 	}
 	
 	
@@ -186,9 +197,9 @@ public class Menu {
 		}
 	}
 		
-	public void handlePortal(Roles role) {
+	public void handlePortal(Roles role) throws SQLException {
 		//get the list of employees//
-		List<Users_> users = User_Services.getReimbursementsByRole(role);
+		List<Users_> users = us.getUsersByRole(role);
 		
 		int[] ids = new int [users.size() + 1];
 		ids[users.size()] = 0;
@@ -198,7 +209,7 @@ public class Menu {
 		
 		//Ask for employee ID number to continue//
 		System.out.println("---------------------------");
-		System.out.println("PLEASE ENTER THE NUMBER OF YOUR CHOICE");
+		System.out.println("PLEASE ENTER THE ID NUMBER OF YOUR CHOICE");
 		
 		//Enhanced for loop to print out all users//
 		for(Users_ u : users) {
@@ -212,7 +223,7 @@ public class Menu {
 		if(userChoice == 0) {
 			return;
 		}
-		Users_ employee = Reimbursement_Services.getUserById(userChoice);
+		Users_ employee = User_Services.getUserById(userChoice);
 		
 		if(role == Roles.manager) {
 			System.out.println("Opening Manager Portal for " + employee.getUsername());
@@ -222,13 +233,15 @@ public class Menu {
 			displayEmployeeMenu(employee);
 		}
 	}
-	
+
 	
 	public String fetchInput() {
 		//scan.nextLine() gets whole line including whitespace//
 		//scan.split() gets line and separates into arrays by whitespace//
 		//scan[0] keeps only the first element//
-		return Scanner.nextLine().split(regex:" ")[0];
+		@SuppressWarnings("resource")
+		Scanner scan = new Scanner(System.in);
+		return scan.nextLine().split(" ")[0];
 	}
 	
 	public void displayPendingReimbursements() {
@@ -244,7 +257,7 @@ public class Menu {
 	}
 	
 	public void displayResolvedReimbursements() {
-		List<Reimbursement_> resolvedReimbursements = Reimbursement_Services.getResoledReimbursements();
+		List<Reimbursement_> resolvedReimbursements = Reimbursement_Services.getResolvedReimbursements();
 		
 		if(resolvedReimbursements.isEmpty()) {
 			System.out.println("No resolved Requests...");
@@ -259,14 +272,14 @@ public class Menu {
 		List<Reimbursement_>reimbursements = Reimbursement_Services.getReimbursementsByAuthor(employee.getId());
 		
 		if(reimbursements.isEmpty()) {
-			System.out.println("No Previous Requests.....");
-			System.out.println("Retuurning to Previous Menu....");
+			System.out.println("No Previous Requests..for now...speak with a manager.");
+			System.out.println("Returning to Previous Menu....");
 		}
 		for(Reimbursement_ r : reimbursements) {
 			System.out.println(r);
 		}
 	}
-	public void displayMenu() {
+	public void displayMenu() throws SQLException {
 		//menu continues after input
 		boolean menuOptions = true;
 		
@@ -299,13 +312,6 @@ public class Menu {
 			}
 		}
 	}
-	private void handlePortal2(Roles employee) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
 	public void displayFinanceManagerMenu(Users_ manager) {
 		boolean managerPortal = true;
 		
@@ -348,12 +354,12 @@ public class Menu {
 	public void displayEmployeeMenu(Users_ employee) {
 		boolean employeePortal = true;
 		
-		System.out.println("-------------------------");
-		System.out.println("Welsome to the Employee Portal, " + employee.getUsername());
-		System.out.println("-------------------------");
-		System.out.println();
-		
 		while(employeePortal) {
+			System.out.println("-------------------------");
+			System.out.println("Welcome to the Employee Portal, " + employee.getUsername());
+			System.out.println("-------------------------");
+			System.out.println();
+			
 			System.out.println("PLEASE ENTER A NUMBER");
 			System.out.println("1 -> View Previous Requests");
 			System.out.println("2 -> Submit a Reimbursement");
@@ -374,10 +380,12 @@ public class Menu {
 					employeePortal = false;
 					break;
 			}
+			
+			
 		}
 	}
 	
-	//starts javalin on desired port//
+	/*//starts javalin on desired port//
 	public void start(int port) {
 		this.app.start(port);
 	} 
@@ -388,11 +396,34 @@ public class Menu {
 	ReimbursementController reimbursementController = new ReimbursementController();
 	
 	//creates javalin app to designate routes and enables CORS for all origins to avoid http request constraints//
+	/*Javalin app = Javalin.create(
+			config -> {
+				config.enableCorsForAllOrigins();
+			}
+		).start(3000);
+	
+	public static void main(String[] args)throws SQLException {
+		UserController uc = new UserController();
+		
+		//Testing Database Connectivity - just testing whether our Connection (from ConnectionFactory) is successful
+		try(Connection conn = ConnectionFactory.getConnection()){
+			System.out.println("Connection Successful :)");
+		} catch(SQLException e) {
+			System.out.println("Connection failed");
+			e.printStackTrace();
+		}
 	Javalin app = Javalin.create(
 			config -> {
 				config.enableCorsForAllOrigins();
 			}
 		).start(3000);
+		
+		//get endpoints//
+		app.get("/user", uc.getUserHandler);
+		app.post("/user", uc.insertUserHandler);
+		//app.post("/login", null);
+		
+		}
 	
 		
 		//set login path
@@ -426,7 +457,7 @@ public class Menu {
 					put(reimbursementController::handleProcess);
 			});
 		});
-	});
-	
+	};
+	}*/
 }
 

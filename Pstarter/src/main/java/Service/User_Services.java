@@ -10,13 +10,15 @@ import java.util.List;
 
 import javax.management.Query;
 
+import com.revature.MockData;
+
 import DAO.userDAO;
 import Models.Roles;
 import Models.Users_;
 import Models.Users_;
 public class User_Services {
-	userDAO uDAO = new userDAO();
-	
+	static userDAO uDAO = new userDAO();
+	MockData md = new MockData();
 	
 	//get all users//
 	public List<Users_> getAllUsers() throws SQLException{
@@ -25,15 +27,14 @@ public class User_Services {
 	}
 	////////////////////////////////////////////////////////////o,limkjnjbv
 	//get user by username method//
-	public List<Users_> getUserByUsername() throws SQLException {
-		List<Users_> user = uDAO.getusername(username);
+	public static Users_ getUserByUsername(String username){
+		return uDAO.getUserByUsername(username);
 		
-		return user;
 	}
 	////////////////////////////////////////////////////////
 	//get user by id method//
 	public static Users_ getUserById(int id){
-		List<Users_> user = uDAO.getUserById(id);
+		Users_ user = uDAO.getUserById(id);
 		return user;
 	}
 	
@@ -44,8 +45,14 @@ public class User_Services {
 		
 	}	
 	//get user by role method//
-	public List<Users_> Role(Roles role) throws SQLException {
-		List<Users_> users = uDAO.Roles(role);
+	public List<Users_> getUsersByRole(Roles role) throws SQLException {
+		List<Users_> users = new ArrayList<>();
+		
+		for(Users_ user : uDAO.getAllUsers()) {
+			if(user.getRole() == role) {
+				users.add(user);
+			}
+		}
 		
 		return users;
 	}
@@ -53,5 +60,9 @@ public class User_Services {
 	//create new user//
 	public void insertUser(Users_ newUser) throws SQLException{
 		uDAO.insertUser(newUser);
+	}
+	public static List<Users_> getReimbursementsByRole(Roles role) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

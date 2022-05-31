@@ -16,7 +16,7 @@ import Utilities.ConnectionFactory;
 public class reimbursementDAO {
 	public void update(Reimbursement_ unprocessedReimbursement) {
 		try(Connection connection = ConnectionFactory.getConnection()){
-			String sql = "UPDATE ers_reimbursements SET resolver = ?, status = ?::status WHERE id = ?";
+			String sql = "UPDATE ers_reimbursement SET resolver = ?, status = ? WHERE id = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setInt(1, unprocessedReimbursement.getResolver());
@@ -31,9 +31,9 @@ public class reimbursementDAO {
 			e.printStackTrace();
 		}
 	}
-	public List<Reimbursement_> getReimbursementsByUser(int userId){
+	public static List<Reimbursement_> getReimbursementsByUser(int userId){
 		try(Connection connection = ConnectionFactory.getConnection()){
-			String sql = "select * from ers_reimbursements where author = ?";
+			String sql = "select * from ers_reimbursement where author = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, userId);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -43,7 +43,7 @@ public class reimbursementDAO {
 			while(resultSet.next()){
 				reimbursements.add(new Reimbursement_(
 						resultSet.getInt("id"),
-						resultSet.getString("author"),
+						resultSet.getInt("author"),
 						resultSet.getInt("resolver"),
 						resultSet.getString("description"),
 						Type.valueOf(resultSet.getString("type")),
@@ -62,7 +62,7 @@ public class reimbursementDAO {
 	
 	public Reimbursement_ getReimbursementsById(int id) {
 		try(Connection connection = ConnectionFactory.getConnection()){
-			String sql = "select * from ers_reimbursements where id = ?";
+			String sql = "select * from ers_reimbursement where id = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -70,7 +70,7 @@ public class reimbursementDAO {
 			if(resultSet.next()) {
 				return new Reimbursement_(
 						resultSet.getInt("id"),
-						resultSet.getString("author"),
+						resultSet.getInt("author"),
 						resultSet.getInt("resolver"),
 						resultSet.getString("description"),
 						Type.valueOf(resultSet.getString("type")),
@@ -86,11 +86,11 @@ public class reimbursementDAO {
 		return null;
 	}
 
-	public List<Reimbursement_> getReimbursementsByStatus(int id) {
+	public List<Reimbursement_> getReimbursementsByStatus(Status status) {
 		try(Connection connection = ConnectionFactory.getConnection()){
-			String sql = "select * from ers_reimbursements where status = ?::status";
+			String sql = "select * from ers_reimbursement where status = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, Status.toString());
+			preparedStatement.setString(1, status.toString());
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			List<Reimbursement_> reimbursements = new ArrayList<>();
@@ -98,7 +98,7 @@ public class reimbursementDAO {
 			while(resultSet.next()) {
 				reimbursements.add(new Reimbursement_(
 						resultSet.getInt("id"),
-						resultSet.getString("author"),
+						resultSet.getInt("author"),
 						resultSet.getInt("resolver"),
 						resultSet.getString("description"),
 						Type.valueOf(resultSet.getString("type")),
@@ -118,14 +118,14 @@ public class reimbursementDAO {
 	public List<Reimbursement_> getAllReimbursements(){
 		try(Connection connection = ConnectionFactory.getConnection()){
 			List<Reimbursement_> reimbursements = new ArrayList<>();
-			String sql = "Select * from ers_reimbursements";
+			String sql = "Select * from ers_reimbursement";
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			
 			while(resultSet.next()) {
 				reimbursements.add(new Reimbursement_(
 						resultSet.getInt("id"),
-						resultSet.getString("author"),
+						resultSet.getInt("author"),
 						resultSet.getInt("resolver"),
 						resultSet.getString("description"),
 						Type.valueOf(resultSet.getString("type")),
@@ -144,9 +144,9 @@ public class reimbursementDAO {
 	
 	public int create(Reimbursement_ reimbursementToBeSubmitted) {
 		try(Connection connection = ConnectionFactory.getConnection()){
-			String sql = "INSERT INTO ers_reimbursements (author, description, type, status, amount)"
+			String sql = "INSERT INTO ers_reimbursement (author, description, type, status, amount)"
 					+ "VALUES (?, ?, ?::type, ?::status, ?)"
-					+ "RETURNING ers_reimbursements.id";
+					+ "RETURNING ers_reimbursement.id";
 			
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, reimbursementToBeSubmitted.getAuthor());
@@ -167,4 +167,5 @@ public class reimbursementDAO {
 		}
 		return 0;
 	}
+
 }

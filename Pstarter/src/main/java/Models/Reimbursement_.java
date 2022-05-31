@@ -10,58 +10,33 @@ public class Reimbursement_ {
 	private final List<Reimbursement_> reimbursements = new ArrayList<>();
 	
 	private int id;
-	private String author;
-	private int resolver;
-	private String description;
+	private int Author;
+	private int Resolver;
+	private String Description;
 	private Type type;
 	private Status status;
-	private double amount;
+	private double Amount;
 	
 	
 	
 	
 
 
-	public Reimbursement_(int id, String i, int j, String description, Type type, Status status,
-			double amount) {
+	public Reimbursement_(int id, int author, int resolver, String description, Type type, Status status, double amount) {
 		super();
 		this.id = id;
-		this.author = i;
-		this.resolver = j;
-		this.description = description;
+		Author = author;
+		Resolver = resolver;
+		Description = description;
 		this.type = type;
 		this.status = status;
-		this.amount = amount;
+		Amount = amount;
 	}
 
 
-	@Override
-	public String toString() {
-		return "Reimbursement_ [reimbursements=" + reimbursements + ", id=" + id + ", author=" + author + ", resolver="
-				+ resolver + ", description=" + description + ", type=" + type + ", status=" + status + ", amount="
-				+ amount + "]";
-	}
-
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(amount, author, description, id, reimbursements, resolver, status, type);
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Reimbursement_ other = (Reimbursement_) obj;
-		return Double.doubleToLongBits(amount) == Double.doubleToLongBits(other.amount)
-				&& Objects.equals(author, other.author) && Objects.equals(description, other.description)
-				&& id == other.id && Objects.equals(reimbursements, other.reimbursements)
-				&& Objects.equals(resolver, other.resolver) && status == other.status && type == other.type;
+	public Reimbursement_() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 
@@ -90,72 +65,67 @@ public class Reimbursement_ {
 	}
 
 
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
-
 	public void setResolver(int resolverId) {
-		this.resolver = resolverId;
+		this.Resolver = resolverId;
 	}
 
 
-	public Reimbursement_() {
+	/*public Reimbursement_() {
 		// TODO Auto-generated constructor stub
 	}
-
+*/
 
 	public void setDescription(String nextLine) {
 		// TODO Auto-generated method stub
-		
+		Description = nextLine;
 	}
 
 
 	public void setAuthor(int id2) {
 		// TODO Auto-generated method stub
-		
+		Author = id2;
 	}
 
 
-	public void setType(Type lodging) {
+	public void setType(Type type) {
 		// TODO Auto-generated method stub
-		
+		this.type = type;
 	}
 
 
 	public void setAmount(double parseDoubleInput) {
 		// TODO Auto-generated method stub
-		
+		Amount = parseDoubleInput;
 	}
 
 
-	public int getAmount() {
+	public double getAmount() {
 		// TODO Auto-generated method stub
-		return 0;
+		return Amount;
 	}
 
 
 	public String getDescription() {
 		// TODO Auto-generated method stub
-		return null;
+		return Description;
 	}
 
 
 	public int getAuthor() {
 		// TODO Auto-generated method stub
-		return 0;
+		return Author;
 	}
 
 
 	public int getId() {
 		// TODO Auto-generated method stub
-		return 0;
+		return id;
 	}
 
 
 	public int getResolver() {
 		// TODO Auto-generated method stub
-		return 0;
+		return Resolver;
 	}
 
 

@@ -16,21 +16,21 @@ public class userDAO {
 	//list all users//
 	public List<Users_>getAllUsers() throws SQLException{
 		try(Connection conn = ConnectionFactory.getConnection()){
-			ResultSet rs = null;
-			String sql = "select * from users_;";
+			ResultSet rs;
+			String sql = "select * from ers_user;";
 			Statement s = conn.createStatement();
 			rs = s.executeQuery(sql);
 			
 			List<Users_>userList = new ArrayList<>();
 			
 			while(rs.next()) {
-				Users_ u = new Users_(
+				userList.add(new Users_(
 						rs.getInt("id"),
 						rs.getString("username"),
 						rs.getString("password"),
-						rs.getString("role")
-						);
-					userList.add(u);
+						Roles.valueOf(rs.getString("role"))
+						));
+					
 			}
 			return userList;
 		}
@@ -49,7 +49,7 @@ public class userDAO {
 			
 			ps.setString(1, newUser.getUsername());
 			ps.setString(2, newUser.getPassword());
-			ps.setString(3, newUser.getRole());
+			ps.setString(3, newUser.getRole().name());
 			ps.executeUpdate();
 			
 			System.out.println("User " + newUser.getUsername() + " was created. Welcome to the team!");
@@ -61,63 +61,56 @@ public class userDAO {
 	}
 	
 	//list users by id//
-	public List<Users_>getUserById(int id){
+	public Users_ getUserById(int id){
 		try(Connection conn = ConnectionFactory.getConnection()){
 			ResultSet rs = null;
-			String sql = "select * from users where id = ?;";
+			String sql = "select * from ers_user where id = ?;";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			
 			ps.setInt(1,  id);
 			rs = ps.executeQuery();
 			
-			List<Users_>userList = new ArrayList<>();
-			
-			while(rs.next()) {
-				Users_ u = new Users_(
+			if(rs.next()) {
+				return new Users_(
 						rs.getInt("id"),
 						rs.getString("username"),
 						rs.getString("password"),
-						rs.getString("role")
+						Roles.valueOf(rs.getString("role"))
 						);
-					userList.add(u);
 			}
-			return userList;
 		}
 		catch(SQLException e) {
 			System.out.println("Something went wrong while getting all users.");
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 	
 	//list users by username//
 	public static Users_ getUserByUsername(String username){
 		try(Connection conn = ConnectionFactory.getConnection()){
-			ResultSet rs = null;
-			String sql = "select * from users where username = ?;";
+		
+			String sql = "select * from users where username = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			
 			ps.setString(1, username);
-			rs = ps.executeQuery();
+			ResultSet rs = ps.executeQuery();
 			
-			List<Users_>userList = new ArrayList<>();
-			
-			while(rs.next()) {
-				Users_ u = new Users_(
-						rs.getInt("id"),
-						rs.getString("username"),
-						rs.getString("password"),
-						rs.getString("role")
-								);
-					userList.add(u);
+			if (rs.next()) {
+                return new Users_(
+                    rs.getInt("id"),
+                    rs.getString("username"),
+                    rs.getString("password"),
+                    Roles.valueOf(rs.getString("role"))
+                        );
 			}
-			return userList;
 		}
 		catch(SQLException e) {
 			System.out.println("Something went wrong while getting all users.");
 			e.printStackTrace();
-			return null;
+			
 		}
+		return null;
 	}
 
 	public List<Users_> Roles(Roles role) {
